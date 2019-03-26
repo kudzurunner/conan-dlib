@@ -4,7 +4,7 @@ import os
 
 class DlibConan(ConanFile):
     name = "dlib"
-    version = "19.16"
+    version = "19.17"
     license = "http://dlib.net/license.html"
     author = "KudzuRunner"
     url = "https://github.com/kudzurunner/conan-dlib"
