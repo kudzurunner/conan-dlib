@@ -5,7 +5,7 @@ environment:
   PYTHON_ARCH: 64
   CONAN_UPLOAD: https://api.bintray.com/conan/kudzurunner/conan-stable
   CONAN_REMOTE: conan-stable
-  CONAN_REFERENCE: dlib/19.16
+  CONAN_REFERENCE: dlib/19.17
   CONAN_USERNAME: kudzurunner
   CONAN_CHANNEL: stable
   CONAN_PASSWORD:
