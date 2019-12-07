@@ -4,7 +4,7 @@ import os
 
 class DlibConan(ConanFile):
     name = "dlib"
-    version = "19.17"
+    version = "19.18"
     license = "http://dlib.net/license.html"
     author = "KudzuRunner"
     url = "https://github.com/kudzurunner/conan-dlib"
@@ -31,11 +31,11 @@ class DlibConan(ConanFile):
         "shared": False,
         "with_jpeg": True,
         "with_png": True,
-        "with_gif": True,
+        "with_gif": False,
         "with_lapack": True,
         "with_blas": True,
         "with_sqlite3": True,
-        "with_cuda": True,
+        "with_cuda": False,
         "disable_gui": True,
         "enable_iso_cpp_only": False,
         "enable_stack_trace": False,
@@ -51,15 +51,15 @@ class DlibConan(ConanFile):
     def requirements(self):
         if not self.options.enable_iso_cpp_only:
             if self.options.with_jpeg:
-                self.requires.add('libjpeg-turbo/2.0.1@kudzurunner/stable')
+                self.requires.add('libjpeg-turbo/2.0.3@kudzurunner/stable')
             if self.options.with_png:
-                self.requires.add('libpng/1.6.36@bincrafters/stable')
+                self.requires.add('libpng/1.6.37')
             if self.options.with_gif:
-                self.requires.add('giflib/5.1.4@bincrafters/stable')
+                self.requires.add('giflib/5.1.4')
             if self.options.with_sqlite3:
-                self.requires.add('sqlite3/3.27.2@bincrafters/stable')
+                self.requires.add('sqlite3/3.30.1')
             if self.options.with_lapack or self.options.with_openblas:
-                self.requires.add('openblas/0.3.5@kudzurunner/stable')
+                self.requires.add('openblas/0.3.7@kudzurunner/stable')
 
     def configure(self):
         if self.settings.os == "Windows":
@@ -86,8 +86,16 @@ class DlibConan(ConanFile):
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
+        # FIX    
+        tools.replace_in_file("{}/{}/CMakeLists.txt".format(self.source_name, self.name), "include(cmake_utils/find_libpng.cmake)",
+                              "find_package(PNG QUIET)")
+                              
+        tools.replace_in_file("{}/{}/CMakeLists.txt".format(self.source_name, self.name), "include(cmake_utils/find_libjpeg.cmake)",
+                              "find_package(JPEG QUIET)")                      
+
     def build(self):
         cmake = CMake(self)
+        cmake.verbose = True
         cmake.definitions['BUILD_SHARED_LIBS'] = False if self.settings.compiler == "Visual Studio" else self.options.shared
         cmake.definitions['DLIB_JPEG_SUPPORT'] = self.options.with_jpeg
         cmake.definitions['DLIB_PNG_SUPPORT'] = self.options.with_png
